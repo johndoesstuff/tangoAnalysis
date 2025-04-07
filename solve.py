@@ -12,15 +12,19 @@ def count_solutions(board, rules, visited=None):
         visited = set()
 
     board = apply_rules(board, rules)
-    if board.is_solved():
-        board_tuple = board_to_tuple(board)
-        if board_tuple not in visited:
-            visited.add(board_tuple)
-            # print("Found solution:")
-            board.print_board()
-            print(f"Found solution")
-            return 1
+
+    board_tuple = board_to_tuple(board)
+    if board_tuple not in visited:
+        # print(f"Found new boardstate {board_tuple}")
+        visited.add(board_tuple)
+    else:
         return 0
+
+
+    if board.is_solved():
+        print("Found solution:")
+        board.print_board()
+        return 1
 
     solutions = 0
     for r in range(board.rows):
@@ -44,8 +48,6 @@ def apply_rules(board, rules):
         changes = False
         for rule in rules:
             changes |= rule(board)
-    # print("Applied rules, board is now:")
-    # board.print_board()
     return board
 
 

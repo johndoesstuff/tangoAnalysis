@@ -38,6 +38,75 @@ class Board:
                         between += "   "  # space between vertical connections
                 print(between)
 
+    def cell_at(pos):
+        return board[pos.row][pos.col]
+
+    def is_valid(self):
+        # check >3 rows
+        for row in self.board:
+            moon_sum = 0
+            sun_sum = 0
+            for cell in row:
+                if cell == Cell.MOON:
+                    moon_sum += 1
+                elif cell == Cell.SUN:
+                    sun_sum += 1
+            if moon_sum > 3 or sun_sum > 3:
+                return False
+
+        # check >3 cols
+        for col in range(self.cols):
+            moon_sum = 0
+            sun_sum = 0
+            for row in range(self.rows):
+                cell = self.board[row][col]
+                if cell == Cell.MOON:
+                    moon_sum += 1
+                elif cell == Cell.SUN:
+                    sun_sum += 1
+            if moon_sum > 3 or sun_sum > 3:
+                return False
+
+        #check >2 in a row
+        for row in self.board:
+            moon_sum = 0
+            sun_sum = 0
+            for cell in row:
+                if cell == Cell.MOON:
+                    moon_sum += 1
+                    sun_sum = 0
+                elif cell == Cell.SUN:
+                    sun_sum += 1
+                    moon_sum = 0
+                if moon_sum > 2 or sun_sum > 2:
+                    return False
+
+        #check >2 in a col
+        for col in range(self.cols):
+            moon_sum = 0
+            sun_sum = 0
+            for row in range(self.rows):
+                cell = self.board[row][col]
+                if cell == Cell.MOON:
+                    moon_sum += 1
+                    sun_sum = 0
+                elif cell == Cell.SUN:
+                    sun_sum += 1
+                    moon_sum = 0
+                if moon_sum > 2 or sun_sum > 2:
+                    return False
+
+        #check restrictions
+        for connection in self.connections:
+            if connection.relation == Relation.EQ:
+                if board.cell_at(connection.posA) != board.cell_at(connection.posB):
+                    return False
+            elif connection.relation == Relation.NEQ:
+                if board.cell_at(connection.posA) == board.cell_at(connection.posB):
+                    return False
+
+        
+
 
 class Connection:
     def __init__(self, posA, posB, relation):

@@ -111,7 +111,7 @@ class Board:
         return True
     
     def is_solved(self):
-        if not is_valid(self):
+        if not self.is_valid():
             return False
         for row in self.board:
             for cell in row:

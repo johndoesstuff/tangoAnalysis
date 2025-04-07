@@ -1,8 +1,42 @@
 from board import Board, Connection, Required, Position, Relation, Cell
 
-def solve(board: Board):
-    return False
+def board_to_tuple(board):
+    return tuple(tuple(cell.value for cell in row) for row in board.board)
 
+def count_solutions(board, rules, visited=None):
+
+    if visited is None:
+        visited = set()
+
+    board = apply_rules(board, rules)
+    if board.is_solved():
+        board_tuple = board_to_tuple(board)
+        if board_tuple not in visited:
+            visited.add(board_tuple)
+            print("Found solution:")
+            board.print_board()
+            return 1
+        return 0
+
+    solutions = 0
+    for r in range(board.rows):
+        for c in range(board.cols):
+            if board.board[r][c] is Cell.EMPTY:
+                board.board[r][c] = Cell.MOON
+                solutions += count_solutions(board, rules, visited)
+                board.board[r][c] = Cell.SUN
+                solutions += count_solutions(board, rules, visited)
+                board.board[r][c] = Cell.EMPTY
+
+    return solutions
+
+def apply_rules(board, rules):
+    changes = True
+    while changes:
+        changes = False
+        for rule in rules:
+            changes |= rule(board)
+    return board
 
 
 def rule_place_moons_near_suns(board):
@@ -135,3 +169,8 @@ rules = [
     rule_fill_overloaded,
     rule_apply_connections,
 ]
+
+
+board = Board(connections=[], requireds=[])
+solution_count = count_solutions(board, rules)
+print(f"Total number of solutions: {solution_count}")

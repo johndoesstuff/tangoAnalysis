@@ -105,7 +105,7 @@ class Board:
                 if board.cell_at(connection.posA) == board.cell_at(connection.posB):
                     return False
 
-        
+        return True
 
 
 class Connection:
@@ -160,20 +160,3 @@ def checkAdj(posA, posB):
         return True
     else:
         return False
-
-
-requireds = [
-    Required(Position(0, 0), Cell.SUN),
-    Required(Position(0, 1), Cell.MOON),
-    Required(Position(1, 0), Cell.MOON),
-    Required(Position(1, 1), Cell.SUN),
-]
-
-connections = [
-    Connection(Position(0, 0), Position(0, 1), Relation.NEQ),
-    Connection(Position(0, 0), Position(1, 0), Relation.EQ),
-    Connection(Position(0, 1), Position(1, 1), Relation.EQ),
-]
-
-board = Board(connections, requireds)
-board.print_board()

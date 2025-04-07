@@ -41,6 +41,9 @@ class Board:
     def cell_at(pos):
         return board[pos.row][pos.col]
 
+    def set_cell(pos, cell):
+        board[pos.row][pos.col] = cell
+
     def is_valid(self):
         # check >3 rows
         for row in self.board:
@@ -105,6 +108,15 @@ class Board:
                 if board.cell_at(connection.posA) == board.cell_at(connection.posB):
                     return False
 
+        return True
+    
+    def is_solved(self):
+        if not is_valid(self):
+            return False
+        for row in self.board:
+            for cell in row:
+                if cell is Cell.EMPTY:
+                    return False
         return True
 
 

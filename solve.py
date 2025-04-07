@@ -61,6 +61,7 @@ def rule_place_suns_near_moons(board):
     return changed
 
 def rule_fill_overloaded(board):
+    changed = False
     for r in range(board.rows):
         moon_sum = 0
         sun_sum = 0
@@ -73,10 +74,12 @@ def rule_fill_overloaded(board):
             for c in range(board.cols):
                 if board.board[r][c] is Cell.EMPTY:
                     board.board[r][c] = Cell.SUN
+                    changed = True
         elif sun_sum >= 3:
             for c in range(board.cols):
                 if board.board[r][c] is Cell.EMPTY:
                     board.board[r][c] = Cell.MOON
+                    changed = True
 
     for c in range(board.cols):
         moon_sum = 0
@@ -90,17 +93,45 @@ def rule_fill_overloaded(board):
             for r in range(board.rows):
                 if board.board[r][c] is Cell.EMPTY:
                     board.board[r][c] = Cell.SUN
+                    changed = True
         elif sun_sum >= 3:
             for r in range(board.rows):
                 if board.board[r][c] is Cell.EMPTY:
                     board.board[r][c] = Cell.MOON
+                    changed = True
+    return changed
 
-
-
-
+def rule_apply_connections(board):
+    changed = False
+    for connection in board.connections:
+        if connection.relation is Relation.EQ:
+            if board.cell_at(connection.posA) != board.cell_at(connection.posB):
+                if board.cell_at(connection.posA) is Cell.EMPTY:
+                    board.set_cell(connection.posA, board.cell_at(connection.posB))
+                    changed = True
+                else:
+                    board.set_cell(connection.posB, board.cell_at(connection.posA))
+                    changed = True
+        if connection.relation is Relation.NEQ:
+            if board.cell_at(connection.posA) is Cell.EMPTY and not board.cell_at(connection.posB) is Cell.EMPTY:
+                if board.cell_at(connection.posB) is Cell.MOON:
+                    board.set_cell(connection.posA, Cell.SUN)
+                    changed = True
+                elif board.cell_at(connection.posB) is Cell.SUN:
+                    board.set_cell(connection.posA, Cell.MOON)
+                    changed = True
+            if board.cell_at(connection.posB) is Cell.EMPTY and not board.cell_at(connection.posA) is Cell.EMPTY:
+                if board.cell_at(connection.posA) is Cell.MOON:
+                    board.set_cell(connection.posB, Cell.SUN)
+                    changed = True
+                elif board.cell_at(connection.posA) is Cell.SUN:
+                    board.set_cell(connection.posB, Cell.MOON)
+                    changed = True
+    return changed
 
 rules = [
     rule_place_moons_near_suns,
     rule_place_suns_near_moons,
     rule_fill_overloaded,
+    rule_apply_connections,
 ]

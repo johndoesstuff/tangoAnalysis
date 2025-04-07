@@ -1,9 +1,12 @@
 from board import Board, Connection, Required, Position, Relation, Cell
+import copy
 
 def board_to_tuple(board):
     return tuple(tuple(cell.value for cell in row) for row in board.board)
 
 def count_solutions(board, rules, visited=None):
+    if not board.is_valid:
+        return 0
 
     if visited is None:
         visited = set()
@@ -13,8 +16,9 @@ def count_solutions(board, rules, visited=None):
         board_tuple = board_to_tuple(board)
         if board_tuple not in visited:
             visited.add(board_tuple)
-            print("Found solution:")
+            # print("Found solution:")
             board.print_board()
+            print(f"Found solution")
             return 1
         return 0
 
@@ -22,20 +26,26 @@ def count_solutions(board, rules, visited=None):
     for r in range(board.rows):
         for c in range(board.cols):
             if board.board[r][c] is Cell.EMPTY:
-                board.board[r][c] = Cell.MOON
-                solutions += count_solutions(board, rules, visited)
-                board.board[r][c] = Cell.SUN
-                solutions += count_solutions(board, rules, visited)
-                board.board[r][c] = Cell.EMPTY
+                new_board = copy.deepcopy(board)
+                new_board.board[r][c] = Cell.MOON
+                solutions += count_solutions(new_board, rules, visited)
+
+                new_board = copy.deepcopy(board)
+                new_board.board[r][c] = Cell.SUN
+                solutions += count_solutions(new_board, rules, visited)
 
     return solutions
 
 def apply_rules(board, rules):
+    # print("Applying rules to board:")
+    # board.print_board()
     changes = True
     while changes:
         changes = False
         for rule in rules:
             changes |= rule(board)
+    # print("Applied rules, board is now:")
+    # board.print_board()
     return board
 
 

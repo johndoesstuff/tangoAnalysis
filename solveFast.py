@@ -17,9 +17,14 @@ solvedRows = [
 ]
 
 solvedRowsInv = [[0 for _ in range(6)] for _ in range(7)]
+for r in range(7):
+    for c in range(6):
+        solvedRowsInv[r][c] = 1 - solvedRows[r][c]
 
 def findSolutions():
     print("Searching Solution Space")
+    print(solvedRows)
+    print(solvedRowsInv)
     solutions = []
     for a in range(14):
         for b in range(7):
@@ -41,20 +46,16 @@ def findSolutions():
                     board.board[r][c] = Cell.SUN
         if (board.is_solved()):
             solutionsFinal.append(board)
-        board.print_board()
+        # board.print_board()
     return solutionsFinal
 
 def generateSolutionTree(a, b, c, d, e, f, g):
-    for r in range(7):
-        for c in range(6):
-            solvedRowsInv[r][c] = 1 - solvedRows[r][c]
-    
     solution = [[0 for _ in range(6)] for _ in range(6)]
     for i in range(6):
         if a < 7:
-            solution[i][0] = solvedRows[a]
+            solution[i][0] = solvedRows[a][i]
         elif a < 14:
-            solution[i][0] = solvedRowsInv[a-7]
+            solution[i][0] = solvedRowsInv[a-7][i]
         else:
             raise Exception("a must be between 0-13")
 
